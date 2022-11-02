@@ -42,13 +42,14 @@ func main() {
 		if event.Rune() == 113 {
 			app.Stop()
 		} else if event.Rune() == 97 {
+			form.Clear(true)
 			addContactForm()
 			pages.SwitchToPage("Add Contact")
 		}
 		return event
 	})
 
-	pages.AddPage("Menu", text, true, true)
+	pages.AddPage("Menu", flex, true, true)
 	pages.AddPage("Add Contact", form, true, false)
 
 	if err := app.SetRoot(pages, true).EnableMouse(true).Run(); err != nil {
@@ -58,6 +59,7 @@ func main() {
 }
 
 func addContactList() {
+	contactsList.Clear()
 	for index, contact := range contacts {
 		contactsList.AddItem(contact.firstName+" "+contact.lastName, " ", rune(49+index), nil)
 	}
@@ -92,6 +94,7 @@ func addContactForm() {
 
 	form.AddButton("Save", func() {
 		contacts = append(contacts, contact)
+		addContactList()
 		pages.SwitchToPage("Menu")
 	})
 }
