@@ -29,13 +29,19 @@ var text = tview.NewTextView().
 var form = tview.NewForm()
 var pages = tview.NewPages()
 var contactsList = tview.NewList().ShowSecondaryText(false)
+var contactText = tview.NewTextView()
 var flex = tview.NewFlex()
 
 func main() {
 
+	contactsList.SetSelectedFunc(func(index int, name string, second_name string, shortcut rune) {
+		setConcatText(&contacts[index])
+	})
+
 	flex.SetDirection(tview.FlexRow).
 		AddItem(tview.NewFlex().
-			AddItem(contactsList, 0, 1, true), 0, 6, false).
+			AddItem(contactsList, 0, 1, true).
+			AddItem(contactText, 0, 4, false), 0, 6, false).
 		AddItem(text, 0, 1, false)
 
 	flex.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -56,6 +62,12 @@ func main() {
 		panic(err)
 	}
 
+}
+
+func setConcatText(contact *Contact) {
+	contactText.Clear()
+	text := contact.firstName + " " + contact.lastName + "/n" + contact.email + "/n" + contact.phoneNumber
+	contactText.SetText(text)
 }
 
 func addContactList() {
