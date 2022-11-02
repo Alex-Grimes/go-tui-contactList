@@ -25,9 +25,43 @@ var contacts []Contact
 var app = tview.NewApplication()
 var text = tview.NewTextView().
 	SetTextColor(tcell.ColorGreen).
-	SetText("(q) to quit")
-
+	SetText("(a) to add a new contact \n(q) to quit")
 var form = tview.NewForm()
+var pages = tview.NewPages()
+var contactsList = tview.NewList().ShowSecondaryText(false)
+var flex = tview.NewFlex()
+
+func main() {
+
+	flex.SetDirection(tview.FlexRow).
+		AddItem(tview.NewFlex().
+			AddItem(contactsList, 0, 1, true), 0, 6, false).
+		AddItem(text, 0, 1, false)
+
+	flex.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Rune() == 113 {
+			app.Stop()
+		} else if event.Rune() == 97 {
+			addContactForm()
+			pages.SwitchToPage("Add Contact")
+		}
+		return event
+	})
+
+	pages.AddPage("Menu", text, true, true)
+	pages.AddPage("Add Contact", form, true, false)
+
+	if err := app.SetRoot(pages, true).EnableMouse(true).Run(); err != nil {
+		panic(err)
+	}
+
+}
+
+func addContactList() {
+	for index, contact := range contacts {
+		contactsList.AddItem(contact.firstName+" "+contact.lastName, " ", rune(49+index), nil)
+	}
+}
 
 func addContactForm() {
 	contact := Contact{}
@@ -58,19 +92,6 @@ func addContactForm() {
 
 	form.AddButton("Save", func() {
 		contacts = append(contacts, contact)
+		pages.SwitchToPage("Menu")
 	})
-}
-
-func main() {
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Rune() == 113 {
-			app.Stop()
-		}
-		return event
-	})
-
-	if err := app.SetRoot(text, true).EnableMouse(true).Run(); err != nil {
-		panic(err)
-	}
-
 }
