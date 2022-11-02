@@ -66,7 +66,7 @@ func main() {
 
 func setConcatText(contact *Contact) {
 	contactText.Clear()
-	text := contact.firstName + " " + contact.lastName + "/n" + contact.email + "/n" + contact.phoneNumber
+	text := contact.firstName + " " + contact.lastName + "\n" + contact.email + "\n" + contact.phoneNumber
 	contactText.SetText(text)
 }
 
